@@ -8,7 +8,7 @@ app.listen(PORT,() => {
     console.log(`Server is running in port ${PORT}`)
 });
 
-app.get('/',(req,res) =>{
+app.get('/equips',(req,res) =>{
     res.json({
         msg:'OK'
     })
