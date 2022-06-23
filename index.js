@@ -1,11 +1,15 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
 const cors = require('cors')
-const PORT = process.env.PORT || 5500;
+
+const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json()
 
+const app = express();
+
+const PORT = process.env.PORT || 5500;
+
 app.use(cors())
+
 app.listen(PORT,() => {
     console.log(`Server is running in port ${PORT}`)
 });
@@ -18,7 +22,7 @@ app.get('/',(req,res) =>{
 })
 
 app.post('/post',jsonParser,(req,res) =>{
-    let result = eval(req.body.value*2)
+    let result = req.body.value*2
 
     res.json({result})
 
