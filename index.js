@@ -20,6 +20,6 @@ app.get('/',(req,res) =>{
 app.post('/post',jsonParser,(req,res) =>{
     let a = eval(req.body.value1*req.body.value2)
 
-    res.json(a)
+    res.json({a})
 
 })
