@@ -18,8 +18,8 @@ app.get('/',(req,res) =>{
 })
 
 app.post('/post',jsonParser,(req,res) =>{
-    let respost = eval(req.body.value*2)
+    let result = eval(req.body.value*2)
 
-    res.json({respost})
+    res.json({result})
 
 })
