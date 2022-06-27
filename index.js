@@ -84,7 +84,7 @@ app.post('/post', jsonParser, (req, res) => {
             for (item of array) {
 
                 let concat = item.split("---");
-                string += `${concat[1]}---${concat[0]}---${concat[4]}---${concat[5]}---${concat[6]}---${concat[7]}***`
+                string += `${concat[1]}---${concat[0]}---${concat[3]}---${concat[4]}---${concat[6]}---${concat[7]}***`
 
             }
 
