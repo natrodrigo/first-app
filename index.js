@@ -1,10 +1,9 @@
 const express = require('express');
 const cors = require('cors')
 const axios = require('axios');
-
-
-
 const bodyParser = require('body-parser');
+
+
 const jsonParser = bodyParser.json()
 
 const app = express();
@@ -29,7 +28,7 @@ app.post('/post', jsonParser, (req, res) => {
     let query = "https://public-api2.ploomes.com/" + req.body.qry
     const config = {
         headers: {
-            "User-Key": req.body.uk
+            "User-Key": uk
         }
     };
 
@@ -88,7 +87,7 @@ app.post('/post', jsonParser, (req, res) => {
 
             }
 
-
+            string = string.replace(/undefined/g," ")
             res.json({ "result": string })
         })
 
