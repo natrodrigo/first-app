@@ -78,14 +78,17 @@ app.post('/post', jsonParser, (req, res) => {
                 array[index] = `${array[index].replace('undefined', '')}***`
 
             }
-
             let string = '';
-            for (item of array) {
 
+            for(item of array){
+                string += item
+            }
+
+            /*  for (item of array) {
                 let concat = item.split("---");
                 string += `${concat[1]}---${concat[0]}---${concat[3]}---${concat[4]}---${concat[6]}---${concat[7]}***`
 
-            }
+            }*/
 
             string = string.replace(/undefined/g," ")
             res.json({ "result": string })
