@@ -26,62 +26,70 @@ app.get('/', (req, res) => {
 
 app.post('/post', jsonParser, (req, res) => {
     let uk = req.body.uk
-    let query = "https://public-api2.ploomes.com/"+ req.body.qry
+    let query = "https://public-api2.ploomes.com/" + req.body.qry
     const config = {
-        headers:{
+        headers: {
             "User-Key": req.body.uk
         }
-      };
+    };
 
 
-    axios.get(query,config)
+    axios.get(query, config)
         .then(response => {
             let $ = response.data
 
             $ = $.value
 
             let opc = []
-            
+
             for (item of $) {
-            
+
                 opc.push(item.ProductPart)
-            
+
             }
-            
+
             for (opcional of opc) {
                 delete opcional.Id
-                for (let [index,item] of opcional.OtherProperties.entries()) {
+                for (let [index, item] of opcional.OtherProperties.entries()) {
                     delete item.Id
                     delete item.FieldId
                     delete item.FieldKey
                     delete item.ProductId
-            
+
                     Object.keys(item).forEach((key) => {
                         if (item[key] == null) {
-                            //console.log(item)
+
                             delete item[key]
                         }
                         else { opcional[`${index.toString()}${key}`] = item[key] }
                     });
-            
+
                 }
                 delete opcional.OtherProperties
             }
-            
+
             let array = []
-            for ([index,opcional] of opc.entries()){
-            
+            for ([index, opcional] of opc.entries()) {
+
                 Object.keys(opcional).forEach((key) => {
-            
+
                     array[index] += `${opcional[key]}---`
-                    
+
                 });
-                array[index] = `${array[index].replace('undefined','')}***`
-            
+                array[index] = `${array[index].replace('undefined', '')}***`
+
             }
-            let string = array.join('')
-            
-            res.json({"result" : string}) 
+
+            let string = '';
+            for (item of array) {
+
+                let concat = item.split("---");
+                string += `${concat[1]}---${concat[0]}---${concat[4]}---${concat[5]}---${concat[6]}---${concat[7]}***`
+
+            }
+
+
+            res.json({ "result": string })
         })
 
 });
