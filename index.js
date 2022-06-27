@@ -55,6 +55,18 @@ app.post('/post', jsonParser, (req, res) => {
                     delete item.FieldKey
                     delete item.ProductId
 
+                    if (item['StringValue'] == null && item['BigStringValue'] == null && item['IntegerValue'] == null &&
+                    item['DecimalValue'] == null &&
+                    item['DateTimeValue'] == null && item['BoolValue'] == null && item['ObjectValueId'] == null &&
+                    item['UserValueId'] == null && item['UserValueName'] == null && item['UserValueAvatarUrl'] == null &&
+                    item['ProductValueId'] == null && item['ProductValueName'] == null && item['AttachmentValueId'] == null &&
+                    item['AttachmentValueName'] == null && item['ContactValueId'] == null && item['ContactValueName'] == null &&
+                    item['ContactValueTypeId'] == null && item['ContactValueRegister'] == null && item['CurrencyValueId'] == null &&
+                    item['AttachmentItemValueId'] == null && item['AttachmentItemValueName'] == null) {
+        
+                    item[`${index.toString()}String`] = ' '
+                }
+                
                     Object.keys(item).forEach((key) => {
                         if (item[key] == null) {
 
@@ -76,7 +88,6 @@ app.post('/post', jsonParser, (req, res) => {
 
                 });
                 array[index] = `${array[index].replace('undefined', '')}***`
-
             }
             let string = '';
 
