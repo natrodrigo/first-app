@@ -26,6 +26,8 @@ app.get('/', (req, res) => {
 app.post('/post', jsonParser, (req, res) => {
     let uk = req.body.uk
     let query = "https://public-api2.ploomes.com/" + req.body.qry
+    let keys_name = req.body.keys_name
+
     const config = {
         headers: {
             "User-Key": uk
@@ -35,10 +37,12 @@ app.post('/post', jsonParser, (req, res) => {
 
     axios.get(query, config)
         .then(response => {
+            let list = Object.values(keys_name)
+            let keylist = Object.keys(keys_name)
             let $ = response.data
 
+            
             $ = $.value
-
             let opc = []
 
             for (item of $) {
@@ -47,37 +51,62 @@ app.post('/post', jsonParser, (req, res) => {
 
             }
 
+
             for (opcional of opc) {
+
                 delete opcional.Id
                 for (let [index, item] of opcional.OtherProperties.entries()) {
                     delete item.Id
                     delete item.FieldId
-                    delete item.FieldKey
+                    //delete item.FieldKey
                     delete item.ProductId
-
-                    if (item['StringValue'] == null && item['BigStringValue'] == null && item['IntegerValue'] == null &&
-                    item['DecimalValue'] == null &&
-                    item['DateTimeValue'] == null && item['BoolValue'] == null && item['ObjectValueId'] == null &&
-                    item['UserValueId'] == null && item['UserValueName'] == null && item['UserValueAvatarUrl'] == null &&
-                    item['ProductValueId'] == null && item['ProductValueName'] == null && item['AttachmentValueId'] == null &&
-                    item['AttachmentValueName'] == null && item['ContactValueId'] == null && item['ContactValueName'] == null &&
-                    item['ContactValueTypeId'] == null && item['ContactValueRegister'] == null && item['CurrencyValueId'] == null &&
-                    item['AttachmentItemValueId'] == null && item['AttachmentItemValueName'] == null) {
-        
-                    item[`${index.toString()}String`] = ' '
-                }
-                
                     Object.keys(item).forEach((key) => {
                         if (item[key] == null) {
-
+                            //console.log(item)
                             delete item[key]
                         }
-                        else { opcional[`${index.toString()}${key}`] = item[key] }
-                    });
+                        else if (key == 'FieldKey') { }
+                        else {
+                            opcional[`${item['FieldKey']}`] = item[key]
+                        }
 
+
+
+
+                    });
                 }
                 delete opcional.OtherProperties
+
+
+                Object.keys(opcional).forEach((key) => {
+
+                    if (key == 'Code' || key == 'Name') {
+                        //pass
+                    }
+                    else {
+                        for (fkeys of keylist) {
+                            if (Object.keys(opcional).indexOf(fkeys) == -1) {
+                                opcional[fkeys] = ' '
+                            }
+                        }
+                    }
+                })
+
+                for (key of Object.keys(keys_name)) {
+                    opcional[`${keys_name[key]}`] = opcional[key]
+                }
+
+                for (key of Object.keys(opcional)) {
+                    if (key == 'Code' || key == 'Name' || list.indexOf(key) != -1) {
+                        //pass
+                    }
+                    else {
+                        delete opcional[key]
+                    }
+                }
             }
+
+            console.log(opcional)
 
             let array = []
             for ([index, opcional] of opc.entries()) {
@@ -88,20 +117,19 @@ app.post('/post', jsonParser, (req, res) => {
 
                 });
                 array[index] = `${array[index].replace('undefined', '')}***`
+
             }
+            // Name, código, custo materiais, custo produção, horas produção, 1ª MCD.
+
             let string = '';
 
-            for(item of array){
+            for (item of array) {
                 string += item
             }
 
-            /*  for (item of array) {
-                let concat = item.split("---");
-                string += `${concat[1]}---${concat[0]}---${concat[3]}---${concat[4]}---${concat[6]}---${concat[7]}***`
 
-            }*/
 
-            string = string.replace(/undefined/g," ")
+            string = string.replace(/undefined/g, " ")
             res.json({ "result": string })
         })
 
