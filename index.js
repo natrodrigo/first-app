@@ -20,13 +20,18 @@ app.get('/', (req, res) => {
     res.json({
         msg: 'Welcome to my API.'
     })
-
 })
 
 app.post('/post', jsonParser, (req, res) => {
+
+    if (req.body.uk == undefined || req.body.qry == undefined || req.body.keys_name == undefined) {
+        res.json({ "result": "($*.): Erro. Os parâmtros uk, qry e keys_name devem ser enviados na requisição e não podem ser 'undefined'." })
+    }
+
     let uk = req.body.uk
     let query = "https://public-api2.ploomes.com/" + req.body.qry
     let keys_name = req.body.keys_name
+
 
     const config = {
         headers: {
@@ -34,23 +39,19 @@ app.post('/post', jsonParser, (req, res) => {
         }
     };
 
-
     axios.get(query, config)
         .then(response => {
             let list = Object.values(keys_name)
             let keylist = Object.keys(keys_name)
             let $ = response.data
 
-            
             $ = $.value
             let opc = []
 
             for (item of $) {
-
                 opc.push(item.ProductPart)
 
             }
-
 
             for (opcional of opc) {
 
@@ -58,25 +59,19 @@ app.post('/post', jsonParser, (req, res) => {
                 for (let [index, item] of opcional.OtherProperties.entries()) {
                     delete item.Id
                     delete item.FieldId
-                    //delete item.FieldKey
                     delete item.ProductId
                     Object.keys(item).forEach((key) => {
                         if (item[key] == null) {
-                            //console.log(item)
                             delete item[key]
                         }
                         else if (key == 'FieldKey') { }
                         else {
                             opcional[`${item['FieldKey']}`] = item[key]
                         }
-
-
-
-
                     });
                 }
-                delete opcional.OtherProperties
 
+                delete opcional.OtherProperties
 
                 Object.keys(opcional).forEach((key) => {
 
@@ -106,8 +101,6 @@ app.post('/post', jsonParser, (req, res) => {
                 }
             }
 
-            console.log(opcional)
-
             let array = []
             for ([index, opcional] of opc.entries()) {
 
@@ -119,18 +112,16 @@ app.post('/post', jsonParser, (req, res) => {
                 array[index] = `${array[index].replace('undefined', '')}***`
 
             }
-            // Name, código, custo materiais, custo produção, horas produção, 1ª MCD.
 
             let string = '';
-
             for (item of array) {
                 string += item
             }
-
-
-
             string = string.replace(/undefined/g, " ")
             res.json({ "result": string })
+        }).catch((error) => {
+            console.log('Error ' + error.message)
+            return res.json({ "result": `($*.): Erro. Houve um problema com a requisição de get feita no Ploomes. Há um problema com a uk ou com a qry. ${error.message}` })
         })
 
 });
