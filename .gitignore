@@ -1,0 +1,10 @@
+
+# docker secrets
+.ploomesdev/first-app/secrets
+
+# ploomesdev temporary files
+.ploomesdev/first-app/generated
+
+.dockerignore
+.ploomesdev
+startup.sh
